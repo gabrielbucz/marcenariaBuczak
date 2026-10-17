@@ -1,11 +1,6 @@
 import MainController from "../controller/MainController";
 import promptSync from 'prompt-sync';
-import Cliente from "../model/Cliente";
-import Orcamento from "../model/Orcamento";
-import MovelSimples from "../model/MovelSimples";
-import MovelComplexo from "../model/MovelComplexo";
-import FreteLocal from "../model/FreteLocal";
-import FreteLonge from "../model/FreteLonge";
+
 
 export default class MainScreen {
     private prompt = promptSync();
@@ -42,10 +37,10 @@ export default class MainScreen {
     }
 
     private cadastrarOrcamentoScreen(): void {
-        let orcamento = new Orcamento();
+        let orcamento = this.controller.getNewOrcamento();
 
         // 1. Coleta dados do Cliente
-        let cliente = new Cliente();
+        let cliente = this.controller.getNewClient();
         console.log("\n--- DADOS DO CLIENTE ---");
         cliente.setNome(this.prompt("Nome do cliente: "));
         cliente.setTelefone(this.prompt("Telefone: "));
@@ -60,7 +55,7 @@ export default class MainScreen {
             console.log("2. Móvel Complexo");
             let tipoMovel = Number(this.prompt("Escolha o tipo de móvel: \n Simples (1) ou Complexo (2):"));
 
-            let movel = (tipoMovel === 2) ? new MovelComplexo() : new MovelSimples();
+            let movel = this.controller.getNewMovel(tipoMovel);
 
             movel.setChapas(Number(this.prompt("Quantidade de chapas: ")));
             movel.setFundos(Number(this.prompt("Quantidade de fundos: ")));
@@ -79,19 +74,13 @@ export default class MainScreen {
         console.log("2. Frete Longe (Com Estadia)");
         let tipoFrete = Number(this.prompt("Escolha o tipo de frete: "));
 
-        if (tipoFrete === 2) {
-            let freteLonge = new FreteLonge();
-            freteLonge.setDistancia(Number(this.prompt("Distância em KM: ")));
-            freteLonge.setEstadia(Number(this.prompt("Dias de estadia: ")));
-            orcamento.setFrete(freteLonge);
-        } else {
-            let freteLocal = new FreteLocal();
-            freteLocal.setDistancia(Number(this.prompt("Distância em KM: ")));
-            orcamento.setFrete(freteLocal);
-        }
+        let frete = this.controller.getNewFrete(tipoFrete);
+
+
+        orcamento.setFrete(frete);
 
         // 4. Salva no banco em memória e imprime resumo
-        this.controller.database.orcamentos.push(orcamento);
+        this.controller.database.adicionarOrcamento(orcamento);
 
         console.log("\n------------------------------------------");
         console.log(" ORÇAMENTO FINALIZADO!");
@@ -104,7 +93,7 @@ export default class MainScreen {
 
     private listarOrcamentosScreen(): void {
         console.log("\n--- ORÇAMENTOS REGISTRADOS ---");
-        const orcamentos = this.controller.database.orcamentos;
+        const orcamentos = this.controller.database.listarOrcamentos();
 
         if (orcamentos.length === 0) {
             console.log("Nenhum orçamento cadastrado até o momento.");

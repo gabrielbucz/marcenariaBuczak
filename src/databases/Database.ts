@@ -1,5 +1,13 @@
 import Orcamento from "../model/Orcamento";
+export default class Database {
 
-export default class Database{
-    public orcamentos: Orcamento[]=[];
+    private orcamentos: Orcamento[] = [];
+
+    public adicionarOrcamento(orcamento: Orcamento): void {
+        this.orcamentos.push(orcamento);
+    }
+
+    public listarOrcamentos(): Orcamento[] {
+        return this.orcamentos;
+    }
 }

@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+ "scripts": {
+    "test": "jest"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -13,6 +13,9 @@
     "prompt-sync": "^4.2.0"
   },
   "devDependencies": {
-    "@types/prompt-sync": "^4.2.3"
+    "@types/jest": "^30.0.0",
+    "@types/prompt-sync": "^4.2.3",
+    "jest": "^30.5.2",
+    "ts-jest": "^29.4.15"
   }
 }
