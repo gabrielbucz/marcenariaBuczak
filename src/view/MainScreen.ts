@@ -1,5 +1,6 @@
 import MainController from "../controller/MainController";
 import promptSync from 'prompt-sync';
+import TipoMovel from "../enums/TipoMovel";
 
 
 export default class MainScreen {
@@ -55,19 +56,24 @@ export default class MainScreen {
             console.log("2. Móvel Complexo");
             let tipoMovel = Number(this.prompt("Escolha o tipo de móvel: \n Simples (1) ou Complexo (2):"));
 
-            let movel = this.controller.getNewMovel(tipoMovel);
+            if (tipoMovel !== TipoMovel.SIMPLES &&
+                tipoMovel !== TipoMovel.COMPLEXO) {
+                console.log("Opção inválida!");
+            } else {
+                const movel = this.controller.getNewMovel(tipoMovel);
 
-            movel.setChapas(Number(this.prompt("Quantidade de chapas: ")));
-            movel.setFundos(Number(this.prompt("Quantidade de fundos: ")));
-            movel.setDobradicas(Number(this.prompt("Quantidade de dobradiças: ")));
-            movel.setPuxadores(Number(this.prompt("Quantidade de puxadores: ")));
-            movel.setHoraTrabalho(Number(this.prompt("Horas de trabalho necessárias: ")));
 
-            orcamento.adicionarMovel(movel);
+                movel.setChapas(Number(this.prompt("Quantidade de chapas: ")));
+                movel.setFundos(Number(this.prompt("Quantidade de fundos: ")));
+                movel.setDobradicas(Number(this.prompt("Quantidade de dobradiças: ")));
+                movel.setPuxadores(Number(this.prompt("Quantidade de puxadores: ")));
+                movel.setHoraTrabalho(Number(this.prompt("Horas de trabalho necessárias: ")));
 
-            adicionarOutro = this.prompt("Deseja adicionar outro móvel a este orçamento? (S/N): ");
+                orcamento.adicionarMovel(movel);
+
+                adicionarOutro = this.prompt("Deseja adicionar outro móvel a este orçamento? (S/N): ");
+            }
         }
-
         // 3. Escolha do Frete
         console.log("\n--- TIPO DE FRETE ---");
         console.log("1. Frete Local");
@@ -85,6 +91,8 @@ export default class MainScreen {
         console.log("\n------------------------------------------");
         console.log(" ORÇAMENTO FINALIZADO!");
         console.log(` Cliente: ${orcamento.getCliente().getNome()}`);
+        console.log(` Telefone: ${orcamento.getCliente().getTelefone()}`);
+        console.log(` Endereço: ${orcamento.getCliente().getEndereco()}`);
         console.log(` Quantidade de móveis: ${orcamento.getMoveis().length}`);
         console.log(` Valor do Frete: R$ ${orcamento.getFrete().calcularFrete().toFixed(2)}`);
         console.log(` VALOR TOTAL: R$ ${orcamento.calcularTotal().toFixed(2)}`);
@@ -103,6 +111,7 @@ export default class MainScreen {
         orcamentos.forEach((orc, index) => {
             console.log(`\nOrçamento #${index + 1}`);
             console.log(`Cliente: ${orc.getCliente().getNome()} (${orc.getCliente().getTelefone()})`);
+            console.log(`Endereço: ${orc.getCliente().getEndereco()}`);
             console.log(`Móveis: ${orc.getMoveis().length} item(ns)`);
             console.log(`Frete: R$ ${orc.getFrete().calcularFrete().toFixed(2)}`);
             console.log(`Total: R$ ${orc.calcularTotal().toFixed(2)}`);

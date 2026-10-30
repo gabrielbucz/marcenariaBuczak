@@ -1,4 +1,7 @@
 import Database from "../databases/Database";
+import IRepositorioOrcamento from "../databases/IRepositorioOrcamento";
+import TipoFrete from "../enums/TipoFrete";
+import TipoMovel from "../enums/TipoMovel";
 import Cliente from "../model/Cliente";
 import Frete from "../model/Frete";
 import FreteLocal from "../model/FreteLocal";
@@ -12,7 +15,7 @@ import promptSync from 'prompt-sync';
 
 
 export default class MainController {
-    public database: Database = new Database();
+    public database: IRepositorioOrcamento = new Database();
 
     constructor() {
         new MainScreen(this);
@@ -30,40 +33,63 @@ export default class MainController {
     public getNewOrcamento(): Orcamento {
         return new Orcamento();
     }
-    
-    public getNewMovel(tipoMovel: number): Movel {
-    if (tipoMovel === 2) {
-        return new MovelComplexo();
+
+    public getNewMovel(tipoMovel: TipoMovel): Movel {
+        if (tipoMovel === TipoMovel.COMPLEXO) {
+            return new MovelComplexo();
+        }
+
+        if (tipoMovel === TipoMovel.SIMPLES) {
+            return new MovelSimples();
+        }
+
+        throw new Error("Tipo de móvel inválido");
     }
 
-    return new MovelSimples();
-}
- 
-    public getNewFrete(tipoFrete: number): Frete {
-    if (tipoFrete === 1) {
-        let freteLocal = new FreteLocal();
+    public getNewFrete(tipoFrete: TipoFrete): Frete {
+        if (tipoFrete === TipoFrete.LOCAL) {
+            let freteLocal = new FreteLocal();
 
-        freteLocal.setDistancia(
-            Number(promptSync()("Informe a distância em km: "))
-        );
+            while (true) {
+                try {
+                    const distancia = Number(promptSync()("Informe a distância em km: "));
 
-        return freteLocal;
+                    freteLocal.setDistancia(distancia);
+                    return freteLocal;
+                }
+                catch (error) {
+                    if (error instanceof Error) {
+                        console.log("Erro ao cadastrar frete", error.message);
+
+                       
+
+                    }
+                }
+            }
+        }
+
+        if (tipoFrete === TipoFrete.LONGE) {
+            let freteLonge = new FreteLonge();
+  
+            while (true) {
+                try {
+                    const distancia = Number(promptSync()("Informe a distância em km: "));
+                    freteLonge.setDistancia(distancia);
+                    break;
+                }
+                catch (error) {
+                    if (error instanceof Error) {
+                        console.log("Erro ao cadastrar frete", error.message);
+                    }
+                }}
+
+            freteLonge.setEstadia(
+                Number(promptSync()("Informe a quantidade de dias de estadia: "))
+            );
+
+            return freteLonge;
+        }
+
+        throw new Error("Tipo de frete inválido");
     }
-
-    if (tipoFrete === 2) {
-        let freteLonge = new FreteLonge();
-
-        freteLonge.setDistancia(
-            Number(promptSync()("Informe a distância em km: "))
-        );
-
-        freteLonge.setEstadia(
-            Number(promptSync()("Informe a quantidade de dias de estadia: "))
-        );
-
-        return freteLonge;
-    }
-
-    throw new Error("Tipo de frete inválido");
-}
 }

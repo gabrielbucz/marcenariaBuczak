@@ -1,5 +1,6 @@
 import Orcamento from "../model/Orcamento";
-export default class Database {
+import IRepositorioOrcamento from "./IRepositorioOrcamento";
+export default class DataBase implements IRepositorioOrcamento {
 
     private orcamentos: Orcamento[] = [];
 
